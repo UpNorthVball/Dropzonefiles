@@ -1,0 +1,3040 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>People Analytics Drop Zone — File Organizer</title>
+  <style>
+    :root{
+      --bg: #0b1220;
+      --panel: rgba(255,255,255,0.06);
+      --border: rgba(255,255,255,0.12);
+      --text: rgba(255,255,255,0.92);
+      --muted: rgba(255,255,255,0.68);
+      --muted2: rgba(255,255,255,0.50);
+      --accent: #7c5cff;
+      --accent2:#21d4fd;
+      --bad: #ff5c7a;
+      --shadow: 0 18px 50px rgba(0,0,0,0.45);
+      --radius: 18px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: var(--sans);
+      color: var(--text);
+      background:
+        radial-gradient(1000px 700px at 18% 10%, rgba(124,92,255,0.35), transparent 55%),
+        radial-gradient(900px 650px at 90% 25%, rgba(33,212,253,0.25), transparent 60%),
+        radial-gradient(800px 600px at 40% 110%, rgba(38,194,129,0.20), transparent 60%),
+        linear-gradient(180deg, #070b14, var(--bg));
+      min-height:100vh;
+    }
+
+    header{
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      background: rgba(11,18,32,0.55);
+      border-bottom: 1px solid var(--border);
+    }
+    .topbar{
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 16px 18px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 12px;
+    }
+    
+    /* Topbar no-brand alignment */
+    
+.brand{
+      display:flex;
+      align-items:center;
+      gap: 12px;
+      min-width: 240px;
+    }
+    .logo{
+      width: 36px;
+      height: 36px;
+      border-radius: 12px;
+      background:
+        radial-gradient(circle at 30% 30%, rgba(255,255,255,0.35), transparent 50%),
+        linear-gradient(135deg, var(--accent), var(--accent2));
+      box-shadow: 0 10px 26px rgba(124,92,255,0.25);
+
+      /* PA letters */
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+      font-size: 14px;
+      letter-spacing: 0.6px;
+      color: rgba(255,255,255,0.95);
+      text-shadow: 0 2px 10px rgba(0,0,0,0.35);
+      user-select: none;
+    }
+    .brand h1{
+      font-size: 15px;
+      margin: 0;
+      letter-spacing: 0.3px;
+    }
+    .brand p{
+      margin: 2px 0 0;
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.25;
+    }
+
+    .actions{
+      display:flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+    button{
+      appearance:none;
+      border: 1px solid var(--border);
+      background: linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.06));
+      color: var(--text);
+      padding: 9px 12px;
+      border-radius: 12px;
+      cursor:pointer;
+      font-weight: 600;
+      font-size: 13px;
+      letter-spacing: 0.2px;
+      box-shadow: 0 10px 22px rgba(0,0,0,0.18);
+      transition: transform .12s ease, border-color .12s ease, background .12s ease;
+      white-space: nowrap;
+    }
+    button:hover{ transform: translateY(-1px); border-color: rgba(255,255,255,0.20); }
+    button:active{ transform: translateY(0px) scale(0.99); }
+    button.primary{
+      border-color: rgba(124,92,255,0.45);
+      background: linear-gradient(135deg, rgba(124,92,255,0.35), rgba(33,212,253,0.18));
+    }
+    button.danger{
+      border-color: rgba(255,92,122,0.35);
+      background: linear-gradient(135deg, rgba(255,92,122,0.22), rgba(255,255,255,0.06));
+    }
+
+    .wrap{
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 18px;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 320px 1fr;
+      gap: 16px;
+    }
+    
+
+
+
+/* People Analytics banner */
+#paBanner{ grid-column: 1 / -1; }
+#paBanner .pa-banner-head{
+  display:flex;
+  align-items:center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.10);
+  background:
+    radial-gradient(900px 220px at 20% 20%, rgba(255,255,255,0.10), rgba(255,255,255,0.00) 60%),
+    linear-gradient(90deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+}
+#paBanner .pa-mark{
+  width: 40px;
+  height: 40px;
+  border-radius: 14px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-family: var(--mono);
+  font-weight: 800;
+  letter-spacing: .6px;
+  color: rgba(255,255,255,0.92);
+  background:
+    linear-gradient(145deg, rgba(255,255,255,0.12), rgba(255,255,255,0.04));
+  border: 1px solid rgba(255,255,255,0.14);
+  box-shadow: 0 10px 26px rgba(0,0,0,0.22);
+}
+#paBanner .pa-banner-title{
+  margin: 0;
+  font-size: 20px;
+  letter-spacing: .4px;
+}
+#paBanner .pa-banner-sub{
+  font-weight: 650;
+  color: rgba(255,255,255,0.72);
+  white-space: nowrap;
+}
+@media (max-width: 900px){
+  #paBanner .pa-banner-sub{ display:block; margin-top: 2px; }
+  
+/* Shrink banner description text */
+#paBanner .muted{ font-size: 9px; line-height: 1.45; }
+#paBanner .pa-banner-title{ font-size: 18px; }
+}
+}
+@media (max-width: 980px){
+      .grid{ grid-template-columns: 1fr; }
+      .brand{ min-width: unset; }
+      .actions{ justify-content:flex-start; }
+    }
+
+    .card{
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .card .card-head{
+      padding: 14px 14px 10px;
+      border-bottom: 1px solid rgba(255,255,255,0.10);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 12px;
+    }
+    .card .card-head h2{
+      margin:0;
+      font-size: 13px;
+      letter-spacing: 0.35px;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .card .card-body{
+      padding: 14px;
+    }
+
+    .hint{
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+    .kbd{
+      font-family: var(--mono);
+      font-size: 11px;
+      padding: 2px 6px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(255,255,255,0.06);
+      color: rgba(255,255,255,0.85);
+    }
+
+    .folders{
+      display:flex;
+      flex-direction:column;
+      gap: 8px;
+    }
+    .folder{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+      padding: 10px 10px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(255,255,255,0.05);
+      cursor:pointer;
+      transition: background .12s ease, border-color .12s ease, transform .12s ease;
+      user-select:none;
+    }
+    .folder:hover{
+      border-color: rgba(255,255,255,0.18);
+      background: rgba(255,255,255,0.07);
+      transform: translateY(-1px);
+    }
+    .folder.active{
+      border-color: rgba(124,92,255,0.55);
+      background: linear-gradient(135deg, rgba(124,92,255,0.22), rgba(33,212,253,0.10));
+    }
+    .folder.drop-target{
+      outline: 2px dashed rgba(33,212,253,0.75);
+      outline-offset: 2px;
+    }
+    .folder-left{
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      min-width: 0;
+    }
+    .folder-icon{
+      width: 28px;
+      height: 22px;
+      border-radius: 8px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.18), rgba(255,255,255,0.06));
+      border: 1px solid rgba(255,255,255,0.16);
+      position: relative;
+      flex: 0 0 auto;
+    }
+    .folder-icon::before{
+      content:"";
+      position:absolute;
+      left: 4px;
+      top: -5px;
+      width: 14px;
+      height: 8px;
+      border-radius: 7px 7px 0 0;
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.14);
+      border-bottom: none;
+    }
+    .folder-name{
+      font-weight: 700;
+      font-size: 13px;
+      overflow:hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .pill{
+      font-family: var(--mono);
+      font-size: 11px;
+      color: rgba(255,255,255,0.78);
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(0,0,0,0.18);
+      flex: 0 0 auto;
+    }
+
+    .folder-title{
+      display:flex;
+      flex-direction:column;
+      gap: 4px;
+      min-width: 0;
+    }
+    .folder-title h3{
+      margin:0;
+      font-size: 18px;
+      letter-spacing: 0.2px;
+      overflow:hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .folder-title span{
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.35;
+    }
+
+    .toolbar{
+      display:flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content:flex-end;
+      align-items:center;
+    }
+    .search{
+      flex: 1 1 240px;
+      min-width: 200px;
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      padding: 9px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(0,0,0,0.15);
+    }
+    .search input{
+      width: 100%;
+      border:none;
+      outline:none;
+      background: transparent;
+      color: var(--text);
+      font-size: 13px;
+    }
+    .search input::placeholder{ color: rgba(255,255,255,0.45); }
+
+    .dropzone{
+      border-radius: var(--radius);
+      border: 1px dashed rgba(255,255,255,0.22);
+      background: rgba(0,0,0,0.12);
+      padding: 18px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 12px;
+      transition: border-color .12s ease, background .12s ease, transform .12s ease;
+    }
+    .dropzone.dragover{
+      border-color: rgba(33,212,253,0.85);
+      background: rgba(33,212,253,0.10);
+      transform: translateY(-1px);
+    }
+    .dropzone .dz-left{
+      display:flex;
+      flex-direction:column;
+      gap: 4px;
+      min-width: 0;
+    }
+    .dropzone .dz-title{
+      font-weight: 800;
+      letter-spacing: 0.2px;
+      margin: 0;
+      font-size: 14px;
+    }
+    .dropzone .dz-sub{
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .list{
+      margin-top: 14px;
+      display:flex;
+      flex-direction:column;
+      gap: 10px;
+    }
+    .file-row{
+      display:flex;
+      align-items:center;
+      gap: 12px;
+      padding: 12px 12px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.05);
+      transition: border-color .12s ease, background .12s ease, transform .12s ease;
+    }
+    .file-row:hover{
+      border-color: rgba(255,255,255,0.18);
+      background: rgba(255,255,255,0.07);
+      transform: translateY(-1px);
+    }
+    .file-row.dragging{ opacity: 0.6; }
+    .file-ico{
+      width: 36px; height: 36px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: linear-gradient(135deg, rgba(124,92,255,0.20), rgba(33,212,253,0.10));
+      display:grid;
+      place-items:center;
+      flex: 0 0 auto;
+    }
+    .file-meta{
+      min-width: 0;
+      flex: 1 1 auto;
+      display:flex;
+      flex-direction:column;
+      gap: 2px;
+    }
+    .file-name{
+      font-weight: 750;
+      font-size: 13px;
+      overflow:hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .file-sub{
+      font-size: 12px;
+      color: var(--muted);
+      display:flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .file-actions{
+      display:flex;
+      gap: 8px;
+      align-items:center;
+      flex: 0 0 auto;
+    }
+    .linkbtn{
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      gap: 8px;
+      padding: 8px 10px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(0,0,0,0.10);
+      color: rgba(255,255,255,0.92);
+      font-size: 12px;
+      font-weight: 700;
+      transition: transform .12s ease, border-color .12s ease, background .12s ease;
+    }
+    .linkbtn:hover{
+      transform: translateY(-1px);
+      border-color: rgba(255,255,255,0.20);
+      background: rgba(255,255,255,0.06);
+    }
+
+    /* Scheduled Drops */
+    .scheduled{
+      margin-top: 14px;
+      padding: 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(255,255,255,0.04);
+    }
+    .scheduled-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+    .scheduled-left{
+      display:flex;
+      flex-direction:column;
+      gap: 4px;
+      min-width: 0;
+    }
+    .scheduled h4{
+      margin: 0;
+      font-size: 13px;
+      letter-spacing: 0.35px;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .scheduled .scheduled-sub{
+      font-size: 12px;
+      color: var(--muted2);
+      line-height: 1.3;
+    }
+    .scheduled-actions{
+      display:flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content:flex-end;
+      align-items:center;
+    }
+    .scheduled-actions button{
+      padding: 8px 10px;
+      font-size: 12px;
+      border-radius: 12px;
+    }
+
+    .scheduled-list{
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px 12px;
+    }
+    @media (max-width: 560px){
+      .scheduled-list{ grid-template-columns: 1fr; }
+    }
+    .scheduled-item{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+      padding: 10px 10px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(0,0,0,0.10);
+    }
+    .scheduled-item .m{
+      font-weight: 800;
+      font-size: 13px;
+      min-width: 64px;
+      color: rgba(255,255,255,0.88);
+    }
+    .scheduled-item .d{
+      font-family: var(--mono);
+      font-size: 12px;
+      color: rgba(255,255,255,0.80);
+      white-space: nowrap;
+    }
+
+    
+    .scheduled-item.past{
+      opacity: 0.55;
+    }
+    .scheduled-item.past .m,
+    .scheduled-item.past .d{
+      text-decoration: line-through;
+      text-decoration-thickness: 2px;
+      text-decoration-color: rgba(255,255,255,0.40);
+    }
+
+    .scheduled-item.next{
+      border-color: rgba(33,212,253,0.55);
+      background: linear-gradient(135deg, rgba(33,212,253,0.14), rgba(124,92,255,0.10));
+      animation: scheduledPulse 1.6s ease-in-out infinite;
+    }
+    @keyframes scheduledPulse{
+      0%   { box-shadow: 0 0 0 rgba(33,212,253,0.0), 0 0 0 rgba(124,92,255,0.0); }
+      50%  { box-shadow: 0 0 18px rgba(33,212,253,0.22), 0 0 26px rgba(124,92,255,0.18); }
+      100% { box-shadow: 0 0 0 rgba(33,212,253,0.0), 0 0 0 rgba(124,92,255,0.0); }
+    }
+
+    .scheduled-badge{
+      font-family: var(--mono);
+      font-size: 10px;
+      padding: 3px 7px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(0,0,0,0.18);
+      color: rgba(255,255,255,0.80);
+      white-space: nowrap;
+      flex: 0 0 auto;
+    }
+    .scheduled-badge.next{
+      border-color: rgba(33,212,253,0.45);
+      background: rgba(33,212,253,0.10);
+      color: rgba(255,255,255,0.88);
+    }
+
+
+/* Inline edit/delete controls on scheduled dates */
+.sched-main{
+  display:flex;
+  align-items:center;
+  gap: 10px;
+  min-width: 0;
+}
+.sched-right{
+  display:flex;
+  align-items:center;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+.sched-actions-inline{
+  display:flex;
+  align-items:center;
+  gap: 6px;
+  flex: 0 0 auto;
+}
+.sched-iconbtn{
+  width: 32px;
+  height: 32px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.04);
+  cursor: pointer;
+  padding: 0;
+}
+.sched-iconbtn:hover{
+  background: rgba(255,255,255,0.07);
+  border-color: rgba(255,255,255,0.18);
+  transform: translateY(-1px);
+}
+.sched-iconbtn:active{
+  transform: translateY(0);
+}
+.sched-iconbtn svg{
+  width: 18px;
+  height: 18px;
+}
+.sched-iconbtn svg g{
+  stroke: rgba(255,255,255,0.82);
+}
+.sched-iconbtn.danger:hover{
+  border-color: rgba(255,107,107,0.42);
+}
+.sched-iconbtn.danger svg g{
+  stroke: rgba(255,150,150,0.92);
+}
+.sched-input{
+  width: 170px;
+  max-width: 60vw;
+  padding: 7px 9px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(0,0,0,0.18);
+  color: rgba(255,255,255,0.88);
+  font-family: var(--mono);
+  font-size: 12px;
+  outline: none;
+}
+.scheduled-item.editing{
+  border-color: rgba(255,255,255,0.22);
+  background: rgba(255,255,255,0.06);
+}
+.empty{
+      margin-top: 14px;
+      padding: 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(255,255,255,0.04);
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .toast{
+      position: fixed;
+      bottom: 18px;
+      right: 18px;
+      z-index: 200;
+      max-width: 420px;
+      padding: 12px 12px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.16);
+      background: rgba(0,0,0,0.55);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      box-shadow: var(--shadow);
+      display:none;
+    }
+    .toast.show{ display:block; }
+    .toast .t-title{
+      margin: 0 0 2px;
+      font-weight: 850;
+      font-size: 13px;
+    }
+    .toast .t-msg{
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+  /* Folder inline edit/delete */
+.folder-meta{
+  display:flex;
+  flex-direction:column;
+  gap: 6px;
+  min-width: 0;
+}
+.folder-actions-inline{
+  display:flex;
+  align-items:center;
+  gap: 6px;
+}
+.folder-iconbtn{
+  width: 26px;
+  height: 26px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.04);
+  cursor: pointer;
+  padding: 0;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+}
+.folder-iconbtn:hover{
+  background: rgba(255,255,255,0.07);
+  border-color: rgba(255,255,255,0.18);
+  transform: translateY(-1px);
+}
+.folder-iconbtn:active{ transform: translateY(0); }
+.folder-iconbtn svg{ width: 15px; height: 15px; }
+.folder-iconbtn svg g{ stroke: rgba(255,255,255,0.82); }
+.folder-iconbtn.danger:hover{ border-color: rgba(255,107,107,0.42); }
+.folder-iconbtn.danger svg g{ stroke: rgba(255,150,150,0.92); }
+
+.folder-edit-input{
+  width: min(220px, 60vw);
+  padding: 7px 9px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(0,0,0,0.18);
+  color: rgba(255,255,255,0.88);
+  font-family: var(--mono);
+  font-size: 12px;
+  outline: none;
+}
+.folder.editing{
+  border-color: rgba(255,255,255,0.22);
+  background: rgba(255,255,255,0.06);
+}
+/* Center top action buttons */
+.topbar{
+  justify-content: center;
+}
+.actions{
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* Nudge top buttons up (adds breathing room above header bottom border) */
+.topbar{ padding-top: 14px; padding-bottom: 24px; }
+.actions{ margin-top: -4px; }
+/* Folders header add button */
+.folders-head-row{
+  display:flex;
+  align-items:center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 10px;
+}
+.folder-add-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap: 6px;
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.04);
+  cursor:pointer;
+  padding: 0;
+  flex: 0 0 auto;
+}
+.folder-add-btn:hover{
+  background: rgba(255,255,255,0.07);
+  border-color: rgba(255,255,255,0.18);
+  transform: translateY(-1px);
+}
+.folder-add-btn:active{ transform: translateY(0); }
+.folder-add-btn svg{ width: 18px; height: 18px; }
+.folder-add-btn svg g{ stroke: rgba(255,255,255,0.88); }
+
+.sr-only{
+  position:absolute;
+  width:1px;
+  height:1px;
+  padding:0;
+  margin:-1px;
+  overflow:hidden;
+  clip:rect(0,0,0,0);
+  white-space:nowrap;
+  border:0;
+}
+/* Topbar vertical centering + extra breathing room */
+header{ padding-bottom: 10px; }
+.topbar{
+  align-items: center !important;
+  padding-top: 12px !important;
+  padding-bottom: 22px !important;
+}
+.actions{
+  align-items: center !important;
+  margin-top: 0 !important;
+}
+
+    /* Keep + Folder icon solid colors */
+    .folder-add-btn svg path{ vector-effect: non-scaling-stroke; }
+/* Subfolder button inside folder (Files panel) */
+.folder-add-btn--small{
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  margin-right: 10px;
+  flex: 0 0 auto;
+}
+/* Subfolder list inside the current folder (Files panel) */
+.subfolder-list{
+  display: grid;
+  gap: 10px;
+  margin-top: 10px;
+  margin-bottom: 14px;
+}
+.subfolder-row{
+  display:flex;
+  align-items:center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(255,255,255,0.03);
+  cursor: pointer;
+}
+.subfolder-row:hover{
+  background: rgba(255,255,255,0.06);
+  border-color: rgba(255,255,255,0.16);
+  transform: translateY(-1px);
+}
+.subfolder-left{
+  display:flex;
+  align-items:center;
+  gap: 10px;
+  min-width: 0;
+}
+.subfolder-meta{
+  display:flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.subfolder-name{
+  font-weight: 700;
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.subfolder-sub{
+  font-size: 11px;
+  color: rgba(255,255,255,0.68);
+  display:flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.subfolder-pill{
+  font-size: 11px;
+  color: rgba(255,255,255,0.86);
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.04);
+  flex: 0 0 auto;
+}
+/* Multi-select scheduled dates */
+.date-check{
+  width: 16px;
+  height: 16px;
+  accent-color: #FBBA18;
+  cursor: pointer;
+  flex: 0 0 auto;
+}
+.scheduled-item.selected{
+  border-color: rgba(251,186,24,0.35);
+  background: rgba(251,186,24,0.06);
+}
+#btnRemoveSelectedDropDates[disabled]{
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="topbar">
+<div>
+        
+        
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="primary" id="btnAdminLogin" type="button">Admin Login</button>
+      <button id="btnAdminLogout" type="button" style="display:none;">Logout</button>
+      <button class="primary" id="btnAddFolder" type="button">+ New Folder</button>
+      <button id="btnRenameFolder" type="button">Rename Folder</button>
+      <button class="danger" id="btnDeleteFolder" type="button">Delete Folder</button>
+      <button id="btnExportAuditLog" type="button">Export Audit Log</button>
+      <button class="danger" id="btnClearAll" type="button">Clear All</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="grid">
+    
+<!-- People Analytics banner -->
+<section class="card" id="paBanner" aria-label="People Analytics Banner" style="grid-column: 1 / -1; overflow:hidden;">
+  <div class="pa-banner-head">
+    <div class="pa-mark" aria-hidden="true">PA</div>
+    <div class="pa-banner-text">
+      <h2 class="pa-banner-title">People Analytics <span class="pa-banner-sub">— The Drop Zone</span></h2>
+    </div>
+  </div>
+
+  <div class="card-body" style="padding-top: 12px;">
+    <div class="muted" style="line-height:1.55;">This website is designed as a <strong>drop zone pipeline</strong> for People Analytics files: create folders, drag &amp; drop files into the right place, and maintain visibility on upcoming scheduled drops for each folder. <strong>Unauthorized users can only drop files.</strong> Admin access (authorized People Analytics employees only) includes the capability to <strong>add, edit, rename, and delete</strong> files and folders, and to manage scheduled drop dates.</div>
+  </div>
+</section>
+
+<section class="card" aria-label="Folders">
+      <div class="card-head">
+        <div class="folders-head-row">
+  <h2>Folders</h2>
+  <button id="btnAddFolderInline" class="folder-add-btn" type="button" title="Add subfolder" aria-label="Add subfolder">
+  <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+    <!-- Solid folder -->
+    <path d="M3 7a2 2 0 0 1 2-2h5l2 2h9a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"
+          fill="#FBBA18"/>
+    <!-- Plus sign -->
+    <path d="M12 12v6" stroke="#0b1220" stroke-width="2.2" stroke-linecap="round"/>
+    <path d="M9 15h6" stroke="#0b1220" stroke-width="2.2" stroke-linecap="round"/>
+  </svg>
+  <span class="sr-only">Add folder</span>
+</button>
+</div>
+</div>
+      <div class="card-body">
+        <div id="folderList" class="folders" role="listbox" aria-label="Folder list"></div>
+      </div>
+    </section>
+
+    <section class="card" aria-label="Files">
+      <div class="card-head" style="align-items:flex-start;">
+        <div class="folder-title">
+          <h3 id="currentFolderName">Loading…</h3>
+          <span id="currentFolderMeta">—</span>
+        </div>
+
+        <div class="toolbar" style="min-width: 320px;">
+          <button id="btnAddSubfolderInFolder" class="folder-add-btn folder-add-btn--small" type="button" title="Create subfolder" aria-label="Create subfolder">
+  <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M3 7a2 2 0 0 1 2-2h5l2 2h9a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z" fill="#FBBA18"/>
+    <path d="M12 12v6" stroke="#0b1220" stroke-width="2.2" stroke-linecap="round"/>
+    <path d="M9 15h6" stroke="#0b1220" stroke-width="2.2" stroke-linecap="round"/>
+  </svg>
+  <span class="sr-only">Create subfolder</span>
+</button>
+          <div class="search" title="Filter files by name">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="rgba(255,255,255,0.7)" stroke-width="2"/>
+              <path d="M16.5 16.5 21 21" stroke="rgba(255,255,255,0.7)" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <input id="searchInput" type="text" placeholder="Search files in this folder…" />
+          </div>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <div id="dropzone" class="dropzone" tabindex="0" aria-label="Drop files here">
+          <div class="dz-left">
+            <p class="dz-title">Drop files here</p>
+            <p class="dz-sub">
+              Drag files from your desktop, or drop them onto any folder in the left panel.
+            </p>
+          
+            <p class="dz-sub" style="margin-top:6px;">File naming convention requirements: <em>filedescription_name_date.xlsx</em></p>
+</div>
+          <button id="btnPickFiles" type="button">Choose Files…</button>
+          <input id="filePicker" type="file" multiple hidden />
+        </div>
+
+        <!-- Scheduled Drops (for whichever folder is open) -->
+        <div id="scheduledDrops" class="scheduled" aria-label="Scheduled Drops">
+          <div class="scheduled-head">
+            <div class="scheduled-left">
+              <h4>Scheduled Drops for this Folder</h4>
+              <div class="scheduled-sub">The dates below are the provided drop dates, note that these might be subject to change</div>
+            </div>
+            <div class="scheduled-actions">
+              <button id="btnAddDropDate" type="button">+ Add Date</button>
+              <button id="btnEditDropDate" type="button">Edit Date</button>
+              <button id="btnGenerate12DropDates" type="button">Generate 12 Months</button>
+              <button id="btnRemoveSelectedDropDates" type="button" disabled>Remove Selected</button>
+              <button class="danger" id="btnRemoveDropDate" type="button">Remove Date</button>
+            </div>
+          </div>
+          <ul id="scheduledDropsList" class="scheduled-list"></ul>
+        </div>
+
+        <div id="subfolderList" class="subfolder-list" aria-label="Subfolder list" style="display:none;"></div>
+
+        <div id="fileList" class="list" aria-label="File list"></div>
+        <div id="emptyState" class="empty" style="display:none;">
+          No files yet. Drop some files into <b id="emptyFolderName">this folder</b>.
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite">
+  <p class="t-title" id="toastTitle">Done</p>
+  <p class="t-msg" id="toastMsg">—</p>
+</div>
+
+<script>
+
+(() => {
+  // =======================
+  // Config
+  // =======================
+  const ADMIN_PASSWORD = "PeopleAnalytics2026";
+
+
+// Authorized admin user list (example IDs)
+// Edit this list to add/remove authorized IDs.
+// Format: 1 letter + 6 digits (e.g., A123456)
+const AUTHORIZED_ADMIN_IDS = new Set([
+  "A123456", // demo ID for testing
+  "B234567",
+  "C345678",
+  "D456789",
+  "E567890",
+  "F678901",
+]);
+
+const ADMIN_ID_SESSION_KEY = "pa_admin_id_v1";
+
+const readAdminId = () => {
+  try { return sessionStorage.getItem(ADMIN_ID_SESSION_KEY) || ""; } catch { return ""; }
+};
+const writeAdminId = (id) => {
+  try {
+    if (id) sessionStorage.setItem(ADMIN_ID_SESSION_KEY, id);
+    else sessionStorage.removeItem(ADMIN_ID_SESSION_KEY);
+  } catch {}
+};
+
+function isValidAdminId(id){
+  const s = String(id || "").trim().toUpperCase();
+  return /^[A-Z]\d{6}$/.test(s);
+}
+
+function isAuthorizedAdminId(id){
+  const s = String(id || "").trim().toUpperCase();
+  return AUTHORIZED_ADMIN_IDS.has(s);
+}
+
+  // Admin session: enter password once per tab session
+  const ADMIN_SESSION_KEY = "pa_admin_authed_v1";
+  const readAdminSession = () => {
+    try { return sessionStorage.getItem(ADMIN_SESSION_KEY) === "1"; } catch { return false; }
+  };
+  const writeAdminSession = (on) => {
+    try {
+      if (on) sessionStorage.setItem(ADMIN_SESSION_KEY, "1");
+      else sessionStorage.removeItem(ADMIN_SESSION_KEY);
+    } catch {}
+  };
+  let isAdmin = readAdminSession();
+let adminId = readAdminId();
+  // =======================
+  // Utilities
+  // =======================
+  const $ = (sel) => document.querySelector(sel);
+
+  const uid = () => {
+    try { return crypto.randomUUID(); }
+    catch { return "id_" + Math.random().toString(16).slice(2) + "_" + Date.now().toString(16); }
+  };
+
+  const fmtBytes = (bytes) => {
+    if (!Number.isFinite(bytes)) return "—";
+    const units = ["B","KB","MB","GB","TB"];
+    let v = bytes, i = 0;
+    while (v >= 1024 && i < units.length - 1) { v /= 1024; i++; }
+    const d = i === 0 ? 0 : (v < 10 ? 2 : 1);
+    return v.toFixed(d) + " " + units[i];
+  };
+
+  const fmtDate = (ms) => {
+    try {
+      const d = new Date(ms);
+      return d.toLocaleString(undefined, { year:"numeric", month:"short", day:"2-digit", hour:"2-digit", minute:"2-digit" });
+    } catch { return "—"; }
+  };
+
+  const toast = (() => {
+    let t = null;
+    const el = $("#toast");
+    const titleEl = $("#toastTitle");
+    const msgEl = $("#toastMsg");
+    return (title, msg, ms = 1900) => {
+      clearTimeout(t);
+      titleEl.textContent = title;
+      msgEl.textContent = msg;
+      el.classList.add("show");
+      t = setTimeout(() => el.classList.remove("show"), ms);
+    };
+  })();
+
+  function escapeHtml(str){
+    return String(str ?? "")
+      .replaceAll("&","&amp;")
+      .replaceAll("<","&lt;")
+      .replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;")
+      .replaceAll("'","&#039;");
+  }
+
+  function setAdmin(on, id=""){
+  isAdmin = !!on;
+  if (isAdmin) {
+    adminId = String(id || adminId || "").trim().toUpperCase();
+    writeAdminId(adminId);
+  } else {
+    adminId = "";
+    writeAdminId("");
+  }
+  writeAdminSession(isAdmin);
+  updateAdminUI();
+  if (isAdmin) { logAdminAction("admin_login", { adminId: adminId || "" }, { force: true, adminId: adminId }); }
+
+// Export audit log (admin actions)
+const btnExportAuditLog = $("#btnExportAuditLog");
+if (btnExportAuditLog) {
+  btnExportAuditLog.addEventListener("click", async () => {
+    if (!await requireAdmin("export the audit log")) return;
+    const fmt = prompt('Export audit log as: "excel" (default), "csv", or "word":', "excel");
+    if (fmt === null) return;
+    await exportAuditLog(fmt);
+  });
+}
+}
+
+function updateAdminUI(){
+  const loginBtn = $("#btnAdminLogin");
+  const logoutBtn = $("#btnAdminLogout");
+  if (loginBtn) loginBtn.style.display = isAdmin ? "none" : "inline-flex";
+  if (logoutBtn) logoutBtn.style.display = isAdmin ? "inline-flex" : "none";
+}
+
+async function requireAdmin(actionLabel){
+  if (isAdmin) return true;
+
+  // Step 1: verify authorized People Analytics employee ID
+  let enteredId = prompt("Enter your People Analytics Employee ID (format: A123456):");
+  if (enteredId === null) return false;
+
+  enteredId = String(enteredId || "").trim().toUpperCase();
+
+  if (!isValidAdminId(enteredId)) {
+    toast("Denied", "Invalid ID format. Use 1 letter + 6 digits (e.g., A123456).");
+    return false;
+  }
+
+  if (!isAuthorizedAdminId(enteredId)) {
+    toast("Denied", "ID not authorized for admin access.");
+    return false;
+  }
+
+  // Step 2: confirm admin password (entered once per session)
+  const enteredPw = prompt(`Enter admin password to ${actionLabel}:`);
+  if (enteredPw === null) return false;
+
+  if (enteredPw !== ADMIN_PASSWORD) {
+    toast("Denied", "Incorrect password.");
+    return false;
+  }
+
+  // One-time unlock for this tab session
+  setAdmin(true, enteredId);
+  toast("Admin enabled", `Admin access unlocked for ID ${enteredId}.`);
+  return true;
+}
+
+  // =======================
+  // IndexedDB Persistence
+  // =======================
+  const DB_NAME = "dropbox_folders_db_v1";
+  const DB_VERSION = 3;
+  const STORE_FOLDERS = "folders";
+  const STORE_FILES = "files";
+  const STORE_META = "meta";
+  const STORE_SCHEDULED = "scheduled";
+  const STORE_AUDIT = "audit";
+
+  let db = null;
+
+  function idbOpen(){
+    return new Promise((resolve, reject) => {
+      if (!("indexedDB" in window)) {
+        reject(new Error("IndexedDB not supported"));
+        return;
+      }
+
+      const req = indexedDB.open(DB_NAME, DB_VERSION);
+
+      req.onupgradeneeded = (e) => {
+        const d = e.target.result;
+
+        if (!d.objectStoreNames.contains(STORE_FOLDERS)) {
+          const s = d.createObjectStore(STORE_FOLDERS, { keyPath: "id" });
+          s.createIndex("position", "position", { unique: false });
+        }
+        if (!d.objectStoreNames.contains(STORE_FILES)) {
+          const s = d.createObjectStore(STORE_FILES, { keyPath: "id" });
+          s.createIndex("folderId", "folderId", { unique: false });
+          s.createIndex("addedAt", "addedAt", { unique: false });
+        }
+        if (!d.objectStoreNames.contains(STORE_META)) {
+          d.createObjectStore(STORE_META, { keyPath: "key" });
+        }
+        if (!d.objectStoreNames.contains(STORE_SCHEDULED)) {
+          const s = d.createObjectStore(STORE_SCHEDULED, { keyPath: "id" });
+          s.createIndex("folderId", "folderId", { unique: false });
+          s.createIndex("dateISO", "dateISO", { unique: false });
+        }
+
+if (!d.objectStoreNames.contains(STORE_AUDIT)) {
+  const s = d.createObjectStore(STORE_AUDIT, { keyPath: "id" });
+  s.createIndex("ts", "ts", { unique: false });
+  s.createIndex("adminId", "adminId", { unique: false });
+  s.createIndex("action", "action", { unique: false });
+}
+      };
+
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error || new Error("Failed to open IndexedDB"));
+    });
+  }
+
+  function idbTx(storeNames, mode="readonly"){
+    const tx = db.transaction(storeNames, mode);
+    const stores = Array.isArray(storeNames)
+      ? storeNames.reduce((acc, name) => (acc[name] = tx.objectStore(name), acc), {})
+      : { [storeNames]: tx.objectStore(storeNames) };
+    return { tx, stores };
+  }
+
+  function idbReqToPromise(req){
+    return new Promise((resolve, reject) => {
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error || new Error("IndexedDB request failed"));
+    });
+  }
+
+  async function idbGetAll(storeName, indexName=null, indexValue=null){
+    const { stores } = idbTx(storeName, "readonly");
+    let req;
+    if (indexName) {
+      const idx = stores[storeName].index(indexName);
+      req = idx.getAll(indexValue);
+    } else {
+      req = stores[storeName].getAll();
+    }
+    return await idbReqToPromise(req);
+  }
+
+  async function idbPut(storeName, value){
+    const { stores, tx } = idbTx(storeName, "readwrite");
+    stores[storeName].put(value);
+    await new Promise((res, rej) => {
+      tx.oncomplete = () => res();
+      tx.onerror = () => rej(tx.error || new Error("IndexedDB tx failed"));
+      tx.onabort = () => rej(tx.error || new Error("IndexedDB tx aborted"));
+    });
+  }
+
+  async function idbDelete(storeName, key){
+    const { stores, tx } = idbTx(storeName, "readwrite");
+    stores[storeName].delete(key);
+    await new Promise((res, rej) => {
+      tx.oncomplete = () => res();
+      tx.onerror = () => rej(tx.error || new Error("IndexedDB tx failed"));
+      tx.onabort = () => rej(tx.error || new Error("IndexedDB tx aborted"));
+    });
+  }
+
+  async function idbClear(storeName){
+    const { stores, tx } = idbTx(storeName, "readwrite");
+    stores[storeName].clear();
+    await new Promise((res, rej) => {
+      tx.oncomplete = () => res();
+      tx.onerror = () => rej(tx.error || new Error("IndexedDB tx failed"));
+      tx.onabort = () => rej(tx.error || new Error("IndexedDB tx aborted"));
+    });
+  }
+
+  async function idbGetMeta(key){
+    const { stores } = idbTx(STORE_META, "readonly");
+    const res = await idbReqToPromise(stores[STORE_META].get(key));
+    return res ? res.value : null;
+  }
+
+  async function idbSetMeta(key, value){
+    await idbPut(STORE_META, { key, value });
+  }
+
+  // =======================
+  // App State
+  // =======================
+  const state = {
+    folders: [],
+    activeFolderId: null,
+    search: "",
+    selectedDropDateIds: new Set(),
+    selectedDropFolderId: null,
+    auditMem: []
+  };
+
+  const getActiveFolder = () => state.folders.find(f => f.id === state.activeFolderId);
+
+// =======================
+// System folders (non-deletable)
+// =======================
+const SYSTEM_FOLDERS = [
+  { key: "archive", name: "Archive" },
+  { key: "trash", name: "Trash Can" }
+];
+
+const normalizeName = (s) => String(s || "").trim().toLowerCase();
+
+function systemKeyForFolder(f){
+  const k = String(f?.systemKey || "").trim();
+  if (k === "archive" || k === "trash") return k;
+
+  const n = normalizeName(f?.name);
+  if (n === "archive") return "archive";
+  if (n === "trash can" || n === "trash") return "trash";
+  return null;
+}
+
+function isSystemFolder(f){
+  const k = systemKeyForFolder(f);
+  return k === "archive" || k === "trash";
+}
+
+function getTrashFolder(){
+  return state.folders.find(f => systemKeyForFolder(f) === "trash") || null;
+}
+
+async function upsertFolderRecord(folderMeta){
+  if (db) await idbPut(STORE_FOLDERS, folderMeta);
+}
+
+async function ensureSystemFolders(){
+  // Ensure Archive + Trash Can exist in state & IndexedDB (for existing users too)
+  let maxPos = state.folders.reduce((m,f) => Math.max(m, f.position ?? 0), 0);
+  const now = Date.now();
+
+  for (const sys of SYSTEM_FOLDERS) {
+    let existing = state.folders.find(f => systemKeyForFolder(f) === sys.key);
+
+    if (existing) {
+      existing.systemKey = sys.key;
+      existing.isSystem = true;
+        existing.parentId = null;
+      if (existing.name !== sys.name) existing.name = sys.name;
+
+      await upsertFolderRecord({
+          id: existing.id,
+          name: existing.name,
+          position: existing.position ?? 0,
+          createdAt: existing.createdAt ?? now,
+          parentId: null,
+          systemKey: existing.systemKey,
+          isSystem: true
+        });
+    } else {
+      const meta = {
+        id: uid(),
+        name: sys.name,
+        position: ++maxPos,
+        createdAt: now,
+        parentId: null,
+        systemKey: sys.key,
+        isSystem: true
+      };
+
+      state.folders.push({ ...meta, files: [], scheduled: [] });
+      await upsertFolderRecord(meta);
+    }
+  }
+
+  state.folders.sort((a,b) => (a.position ?? 0) - (b.position ?? 0));
+}
+
+
+  function ensureActiveFolder(){
+    if (!state.folders.length) return;
+    if (!state.activeFolderId || !state.folders.some(f => f.id === state.activeFolderId)) {
+      state.activeFolderId = state.folders[0].id;
+    }
+  }
+
+  // =======================
+  // CRUD (with persistence)
+  // =======================
+  
+
+async function addFolder(name, parentId=null){
+  const n = (name || "").trim() || "New Folder";
+
+  const p = (parentId ?? null);
+  const siblings = state.folders.filter(f => (f.parentId ?? null) === p);
+  const minPos = siblings.length ? siblings.reduce((m,f) => Math.min(m, f.position ?? 0), 0) : 0;
+
+  const folder = { id: uid(), name: n, parentId: p, position: siblings.length ? (minPos - 1) : 0, createdAt: Date.now() };
+
+  state.folders.unshift({ ...folder, files: [], scheduled: [] });
+  // If creating a subfolder, keep the parent selected so the new subfolder appears on the right.
+  // Top-level folder creation switches to the new folder.
+  state.activeFolderId = (p !== null) ? p : folder.id;
+
+  await idbPut(STORE_FOLDERS, folder);
+  await idbSetMeta("activeFolderId", state.activeFolderId);
+  await refreshScheduled(folder.id);
+
+  await logAdminAction("folder_create", { folderId: folder.id, folderName: folder.name, parentId: p, parentName: (p ? (state.folders.find(x => x.id === p)?.name || "") : "") });
+
+  render();
+  toast("Folder created", p ? `“${folder.name}” created inside “${state.folders.find(x => x.id === p)?.name || "parent"}”.` : `“${folder.name}” is ready.`);
+}
+
+  
+async function renameFolder(folderId, newName){
+  const f = state.folders.find(x => x.id === folderId);
+  if (!f) return;
+
+  if (isSystemFolder(f)) {
+    toast("Not allowed", "Archive and Trash Can folders can’t be renamed.");
+    return;
+  }
+
+  const n = (newName || "").trim();
+  if (!n) return toast("Rename cancelled", "Folder name can’t be empty.");
+
+  const old = f.name;
+  f.name = n;
+
+  await idbPut(STORE_FOLDERS, { id: f.id, name: f.name, parentId: (f.parentId ?? null), position: f.position, createdAt: f.createdAt, systemKey: f.systemKey || null, isSystem: !!f.isSystem });
+  await logAdminAction("folder_rename", { folderId: f.id, oldName: old, newName: f.name, parentId: (f.parentId ?? null) });
+
+  render();
+  toast("Folder renamed", `“${old}” → “${f.name}”`);
+}
+
+  async function deleteFolder(folderId){
+  const target = state.folders.find(x => x.id === folderId);
+  if (isSystemFolder(target)) {
+    toast("Not allowed", "Archive and Trash Can folders can’t be deleted.");
+    return;
+  }
+
+  if (state.folders.length <= 1) {
+    toast("Not allowed", "You need at least one folder.");
+    return;
+  }
+
+  const idx = state.folders.findIndex(x => x.id === folderId);
+  if (idx < 0) return;
+
+  const f = state.folders[idx];
+
+  // Re-parent any child folders up one level (to this folder's parent)
+  const newParentId = (f.parentId ?? null);
+  const children = state.folders.filter(x => (x.parentId ?? null) === folderId);
+  for (const child of children) {
+    child.parentId = newParentId;
+    await idbPut(STORE_FOLDERS, {
+      id: child.id,
+      name: child.name,
+      parentId: (child.parentId ?? null),
+      position: child.position,
+      createdAt: child.createdAt,
+      systemKey: child.systemKey || null,
+      isSystem: !!child.isSystem
+    });
+  }
+
+  const trash = getTrashFolder();
+  const fallback = trash || state.folders.find(x => x.id !== folderId) || state.folders[0];
+
+  // Move files from this folder into Trash Can (or fallback if Trash missing)
+  if (f.files?.length) {
+    for (const fileEntry of f.files) {
+      fileEntry.folderId = fallback.id;
+      fallback.files.unshift(fileEntry);
+      await idbPut(STORE_FILES, fileEntry);
+    }
+  }
+
+  // Remove scheduled dates for the deleted folder
+  if (db) {
+    const scheduled = await idbGetAll(STORE_SCHEDULED, "folderId", folderId);
+    for (const s of scheduled || []) await idbDelete(STORE_SCHEDULED, s.id);
+  }
+
+  state.folders.splice(idx, 1);
+  await idbDelete(STORE_FOLDERS, folderId);
+
+  // If the deleted folder was active, switch to its parent if possible; else fallback
+  if (state.activeFolderId === folderId) {
+    const parent = state.folders.find(x => x.id === newParentId);
+    state.activeFolderId = parent ? parent.id : fallback.id;
+    await idbSetMeta("activeFolderId", state.activeFolderId);
+  }
+
+  await logAdminAction("folder_delete", { folderId: folderId, folderName: f.name, movedFiles: (f.files?.length || 0), reparentedChildren: (children?.length || 0), newParentId: newParentId, fallbackFolderId: fallback.id, fallbackName: fallback.name });
+
+  render();
+  toast("Folder deleted", `“${f.name}” removed. Files moved to “${fallback.name}”.`);
+}
+
+
+
+  async function clearAll(){
+    for (const f of state.folders) f.files = [];
+    await idbClear(STORE_FILES);
+    await logAdminAction("clear_all", { note: "All files cleared from all folders" });
+    render();
+    toast("Cleared", "All folders are now empty.");
+  }
+
+  async function addFilesToFolder(folderId, fileList){
+    const f = state.folders.find(x => x.id === folderId);
+    if (!f) return;
+
+    const files = Array.from(fileList || []);
+    if (!files.length) return;
+
+    for (const file of files) {
+      const entry = {
+        id: uid(),
+        folderId: folderId,
+        blob: file,
+        name: file.name,
+        size: file.size,
+        type: file.type || "unknown",
+        lastModified: file.lastModified,
+        addedAt: Date.now()
+      };
+
+      f.files.push(entry);
+      await idbPut(STORE_FILES, entry);
+    }
+
+    await logAdminAction("files_added", { folderId: f.id, folderName: f.name, count: files.length, fileNames: files.slice(0,20).map(x=>x.name) });
+
+    render();
+    toast("Added files", `${files.length} file${files.length === 1 ? "" : "s"} added to “${f.name}”.`);
+  }
+
+  async function removeFile(folderId, fileId){
+  const f = state.folders.find(x => x.id === folderId);
+  if (!f) return;
+
+  const idx = f.files.findIndex(x => x.id === fileId);
+  if (idx < 0) return;
+
+  const entry = f.files[idx];
+  const name = entry.name || "file";
+
+  const trash = getTrashFolder();
+  if (!trash) {
+    toast("Error", "Trash Can folder is missing.");
+    return;
+  }
+
+  // If already in Trash Can, permanently delete
+  if (trash.id === folderId) {
+    f.files.splice(idx, 1);
+    await idbDelete(STORE_FILES, fileId);
+    await logAdminAction("file_permanent_delete", { folderId: f.id, folderName: f.name, fileId: fileId, fileName: name });
+    render();
+    toast("Deleted", `Permanently deleted “${name}”.`);
+    return;
+  }
+
+  // Move to Trash Can
+  f.files.splice(idx, 1);
+  entry.folderId = trash.id;
+  trash.files.unshift(entry);
+
+  await idbPut(STORE_FILES, entry);
+  await logAdminAction("file_move_to_trash", { fromFolderId: folderId, fromFolderName: f.name, toFolderId: trash.id, toFolderName: trash.name, fileId: fileId, fileName: name });
+
+  render();
+  toast("Moved to Trash", `“${name}” was moved to “${trash.name}”.`);
+}
+
+async function moveFile(fromFolderId, toFolderId, fileId){
+    if (fromFolderId === toFolderId) return;
+
+    const from = state.folders.find(x => x.id === fromFolderId);
+    const to = state.folders.find(x => x.id === toFolderId);
+    if (!from || !to) return;
+
+    const idx = from.files.findIndex(x => x.id === fileId);
+    if (idx < 0) return;
+
+    const [item] = from.files.splice(idx, 1);
+    item.folderId = toFolderId;
+    to.files.unshift(item);
+
+    await idbPut(STORE_FILES, item);
+    await logAdminAction("file_move", { fromFolderId: fromFolderId, fromFolderName: from.name, toFolderId: toFolderId, toFolderName: to.name, fileId: fileId, fileName: item.name });
+
+    render();
+    toast("Moved", `“${item.name}” → “${to.name}”`);
+  }
+
+  function downloadFile(entry){
+    const url = URL.createObjectURL(entry.blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = entry.name || "download";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1500);
+  }
+
+  // =======================
+  // Scheduled Drops (per-folder; editable)
+  // =======================
+  const SCHEDULE_DEFAULT_YEAR = 2026;
+
+  function pad2(n){ return String(n).padStart(2,"0"); }
+
+  function dateToISO(d){
+    const y = d.getFullYear();
+    const m = pad2(d.getMonth() + 1);
+    const day = pad2(d.getDate());
+    return `${y}-${m}-${day}`;
+  }
+
+  function isoToDate(iso){
+    const parts = String(iso || "").split("-");
+    if (parts.length !== 3) return null;
+    const y = Number(parts[0]);
+    const m = Number(parts[1]);
+    const d = Number(parts[2]);
+    if (!y || !m || !d) return null;
+    const dt = new Date(y, m - 1, d);
+    dt.setHours(0,0,0,0);
+    // Validate round-trip (guards against invalid dates like 2026-02-31)
+    if (dt.getFullYear() !== y || (dt.getMonth() + 1) !== m || dt.getDate() !== d) return null;
+    return dt;
+  }
+
+  function parseDateInput(input){
+    const s = String(input || "").trim();
+    if (!s) return null;
+
+    // Prefer YYYY-MM-DD
+    const m = /^(\d{4})-(\d{1,2})-(\d{1,2})$/.exec(s);
+    if (m) return isoToDate(`${m[1]}-${pad2(m[2])}-${pad2(m[3])}`);
+
+    // Fallback: let Date parse (e.g., "Jan 31 2026")
+    const dt = new Date(s);
+    if (Number.isNaN(dt.getTime())) return null;
+    dt.setHours(0,0,0,0);
+    return dt;
+  }
+
+  function fiscalMonthEndDates(year){
+    const out = [];
+    for (let m = 0; m < 12; m++){
+      // Day 0 of next month = last day of current month
+      out.push(new Date(year, m + 1, 0));
+    }
+    return out;
+  }
+
+  async function getScheduledForFolder(folderId){
+    if (!db) return [];
+    const rows = await idbGetAll(STORE_SCHEDULED, "folderId", folderId);
+    return (rows || []).sort((a,b) => String(a.dateISO).localeCompare(String(b.dateISO)));
+  }
+
+  
+async function seedScheduledIfEmpty(folderId){
+  // Intentionally disabled: new folders start with NO scheduled dates.
+  // Use the "Generate 12 Months" button to populate defaults on demand.
+  return;
+}
+
+
+  function setFolderScheduled(folderId, rows){
+    const f = state.folders.find(x => x.id === folderId);
+    if (f) f.scheduled = rows;
+  }
+
+  
+async function refreshScheduled(folderId){
+  if (!folderId) return;
+
+  if (!db){
+    // In-memory fallback (no persistence)
+    const f = state.folders.find(x => x.id === folderId);
+    if (f && !Array.isArray(f.scheduled)) f.scheduled = [];
+    return;
+  }
+
+  // No automatic seeding — folders start empty unless the user generates or adds dates.
+  const rows = await getScheduledForFolder(folderId);
+  setFolderScheduled(folderId, rows);
+}
+
+
+  async function addScheduledDate(folderId, dateISO){
+    const f = state.folders.find(x => x.id === folderId);
+    if (!f) return;
+
+    const iso = String(dateISO || "").trim();
+    if (!iso) return;
+
+    f.scheduled = Array.isArray(f.scheduled) ? f.scheduled : [];
+    const exists = f.scheduled.some(r => r.dateISO === iso);
+    if (exists) {
+      toast("No change", `${iso} is already scheduled for “${f.name}”.`);
+      return;
+    }
+
+    const row = { id: uid(), folderId, dateISO: iso, createdAt: Date.now() };
+    if (db) await idbPut(STORE_SCHEDULED, row);
+
+    f.scheduled.push(row);
+    f.scheduled.sort((a,b) => String(a.dateISO).localeCompare(String(b.dateISO)));
+
+    await logAdminAction("scheduled_add", { folderId: folderId, folderName: f.name, dateISO: iso });
+    renderScheduledDrops();
+    toast("Scheduled", `Added ${iso} to “${f.name}”.`);
+  }
+
+  async function updateScheduledDate(folderId, rowId, newISO){
+    const f = state.folders.find(x => x.id === folderId);
+    if (!f) return;
+
+    f.scheduled = Array.isArray(f.scheduled) ? f.scheduled : [];
+    const row = f.scheduled.find(r => r.id === rowId);
+    if (!row) return;
+
+    const iso = String(newISO || "").trim();
+    if (!iso) return;
+
+    const dup = f.scheduled.some(r => r.id !== rowId && r.dateISO === iso);
+    if (dup) {
+      toast("No change", `${iso} already exists for “${f.name}”.`);
+      return;
+    }
+
+    const oldISO = row.dateISO;
+    row.dateISO = iso;
+    if (db) await idbPut(STORE_SCHEDULED, row);
+    await logAdminAction("scheduled_edit", { folderId: folderId, folderName: f.name, rowId: rowId, oldISO: oldISO, newISO: iso });
+
+    f.scheduled.sort((a,b) => String(a.dateISO).localeCompare(String(b.dateISO)));
+    renderScheduledDrops();
+    toast("Updated", `Changed to ${iso} in “${f.name}”.`);
+  }
+
+  async function removeScheduledDate(folderId, rowId){
+    const f = state.folders.find(x => x.id === folderId);
+    if (!f) return;
+
+    f.scheduled = Array.isArray(f.scheduled) ? f.scheduled : [];
+    const idx = f.scheduled.findIndex(r => r.id === rowId);
+    if (idx < 0) return;
+
+    const iso = f.scheduled[idx].dateISO;
+    f.scheduled.splice(idx, 1);
+    if (db) await idbDelete(STORE_SCHEDULED, rowId);
+    await logAdminAction("scheduled_remove", { folderId: folderId, folderName: f.name, rowId: rowId, dateISO: iso });
+
+    renderScheduledDrops();
+    toast("Removed", `Deleted ${iso} from “${f.name}”.`);
+  }
+
+  
+function updateRemoveSelectedButton(){
+  const btn = $("#btnRemoveSelectedDropDates");
+  if (!btn) return;
+  const n = state.selectedDropDateIds ? state.selectedDropDateIds.size : 0;
+  btn.disabled = n === 0;
+  btn.textContent = n ? `Remove Selected (${n})` : "Remove Selected";
+}
+
+async function removeMultipleScheduledDates(folderId, rowIds){
+  const f = state.folders.find(x => x.id === folderId);
+  if (!f) return;
+
+  f.scheduled = Array.isArray(f.scheduled) ? f.scheduled : [];
+  const idset = new Set(rowIds || []);
+  const removed = f.scheduled.filter(r => idset.has(r.id));
+
+  if (!removed.length) return;
+
+  f.scheduled = f.scheduled.filter(r => !idset.has(r.id));
+
+  if (db){
+    for (const r of removed){
+      await idbDelete(STORE_SCHEDULED, r.id);
+    }
+  }
+
+  await logAdminAction("scheduled_bulk_remove", { folderId: folderId, folderName: f.name, count: removed.length, dates: removed.map(r=>r.dateISO).slice(0,50) });
+
+  // Clear selection after delete
+  state.selectedDropDateIds = new Set();
+  updateRemoveSelectedButton();
+
+  renderScheduledDrops();
+  toast("Removed", `Deleted ${removed.length} date(s) from “${f.name}”.`);
+}
+
+function scheduledPickerText(rows){
+    return rows.map((r,i)=> `${i+1}) ${r.dateISO}`).join("\n");
+  }
+
+  function renderScheduledDrops(){
+  const listEl = $("#scheduledDropsList");
+  if (!listEl) return;
+
+  const folder = getActiveFolder();
+
+  // Reset selections when switching folders
+  if (!folder || state.selectedDropFolderId !== folder.id){
+    state.selectedDropDateIds = new Set();
+    state.selectedDropFolderId = folder ? folder.id : null;
+    updateRemoveSelectedButton();
+  }
+
+  const rows = (folder && Array.isArray(folder.scheduled)) ? folder.scheduled : [];
+
+  if (!rows.length){
+    listEl.innerHTML = `
+      <li class="scheduled-item">
+        <span class="m">—</span>
+        <span class="d">No scheduled dates</span>
+      </li>
+    `;
+    updateRemoveSelectedButton();
+    return;
+  }
+
+  const dates = rows
+    .map(r => ({ ...r, d: isoToDate(r.dateISO) }))
+    .filter(x => x.d && !Number.isNaN(x.d.getTime()))
+    .sort((a,b) => a.d.getTime() - b.d.getTime());
+
+  // Compare by date (not time): "past" means strictly before today's date.
+  const today = new Date();
+  today.setHours(0,0,0,0);
+
+  const nextUpcoming = dates
+    .filter(x => x.d.getTime() >= today.getTime())
+    .sort((a,b) => a.d.getTime() - b.d.getTime())[0] || null;
+
+  // Remove selected ids that no longer exist
+  const allowed = new Set(dates.map(x => x.id));
+  state.selectedDropDateIds = new Set([...(state.selectedDropDateIds || new Set())].filter(id => allowed.has(id)));
+  updateRemoveSelectedButton();
+
+  listEl.innerHTML = dates.map(x => {
+    const d = x.d;
+    const month = d.toLocaleString(undefined, { month: "short" });
+    const dateStr = d.toLocaleDateString(undefined, { year:"numeric", month:"short", day:"2-digit" });
+
+    const isPast = d.getTime() < today.getTime();
+    const isNext = !!nextUpcoming && d.getTime() === nextUpcoming.d.getTime();
+    const isSel = state.selectedDropDateIds && state.selectedDropDateIds.has(x.id);
+
+    const cls = "scheduled-item" + (isPast ? " past" : "") + (isNext ? " next" : "") + (isSel ? " selected" : "");
+    const badge = isNext ? `<span class="scheduled-badge next">NEXT</span>` : "";
+    const checked = isSel ? "checked" : "";
+
+    return `
+      <li class="${cls}" data-rowid="${escapeHtml(x.id)}" data-iso="${escapeHtml(x.dateISO)}">
+        <input class="date-check" type="checkbox" ${checked} aria-label="Select date" />
+        <div class="sched-main">
+          <span class="m">${escapeHtml(month)}</span>
+          <span class="d" data-role="dateText">${escapeHtml(dateStr)}</span>
+        </div>
+        <div class="sched-right">
+          ${badge}
+          <div class="sched-actions-inline" aria-label="Scheduled date actions">
+            <button class="sched-iconbtn" type="button" data-act="edit" title="Edit date" aria-label="Edit date">
+              ${iconPen(18)}
+            </button>
+            <button class="sched-iconbtn danger" type="button" data-act="delete" title="Delete date" aria-label="Delete date">
+              ${iconTrash(18)}
+            </button>
+          </div>
+        </div>
+      </li>
+    `;
+  }).join("");
+}
+
+
+  // =======================
+  // Rendering
+  // =======================
+  function renderFolders(){
+  const container = $("#folderList");
+  container.innerHTML = "";
+
+  // Build a parent -> children map
+  const byParent = new Map();
+  for (const f of state.folders) {
+    const p = (f.parentId ?? null);
+    if (!byParent.has(p)) byParent.set(p, []);
+    byParent.get(p).push(f);
+  }
+
+  // Sort children by position (then name for stability)
+  for (const [k, arr] of byParent.entries()) {
+    arr.sort((a,b) => (a.position ?? 0) - (b.position ?? 0) || a.name.localeCompare(b.name));
+  }
+
+  const visited = new Set();
+
+  const renderNode = (folder, depth) => {
+    if (!folder || visited.has(folder.id)) return;
+    visited.add(folder.id);
+
+    const el = document.createElement("div");
+    el.className = "folder" + (folder.id === state.activeFolderId ? " active" : "");
+    el.setAttribute("role", "option");
+    el.setAttribute("aria-selected", folder.id === state.activeFolderId ? "true" : "false");
+    el.dataset.folderId = folder.id;
+
+    const sys = isSystemFolder(folder);
+    const indent = Math.min(depth, 8) * 14; // cap indent so it doesn't get too crazy
+
+    const actionsHtml = sys ? "" : `
+          <div class="folder-actions-inline" aria-label="Folder actions">
+            <button class="folder-iconbtn" type="button" data-act="edit" title="Rename folder" aria-label="Rename folder">
+              ${iconPen(16)}
+            </button>
+            <button class="folder-iconbtn danger" type="button" data-act="delete" title="Delete folder" aria-label="Delete folder">
+              ${iconTrash(16)}
+            </button>
+          </div>
+    `;
+
+    el.innerHTML = `
+      <div class="folder-left" style="margin-left:${indent}px">
+        <div class="folder-icon" aria-hidden="true"></div>
+        <div class="folder-meta">
+          <div class="folder-name" data-role="folderName" title="${escapeHtml(folder.name)}">${escapeHtml(folder.name)}</div>
+          ${actionsHtml}
+        </div>
+      </div>
+      <div class="pill" title="File count">${folder.files.length}</div>
+    `;
+
+    // Select folder (ignore clicks on action buttons / inputs)
+    el.addEventListener("click", async (e) => {
+      if (e.target.closest("button[data-act]")) return;
+      if (e.target.closest("input")) return;
+
+      state.activeFolderId = folder.id;
+      await idbSetMeta("activeFolderId", state.activeFolderId);
+      render();
+    });
+
+    // Inline rename/delete actions (skip system folders)
+    if (!sys) {
+      const editBtn = el.querySelector('button[data-act="edit"]');
+      const delBtn  = el.querySelector('button[data-act="delete"]');
+
+      if (editBtn){
+        editBtn.addEventListener("click", async (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          if (!await requireAdmin("rename a folder")) return;
+
+          el.classList.add("editing");
+
+          const nameEl = el.querySelector('[data-role="folderName"]');
+          const actions = el.querySelector(".folder-actions-inline");
+
+          if (nameEl){
+            nameEl.outerHTML = `<input class="folder-edit-input" data-role="folderInput" type="text" value="${escapeHtml(folder.name)}" aria-label="Folder name" />`;
+          }
+
+          if (actions){
+            actions.innerHTML = `
+              <button class="folder-iconbtn" type="button" data-act="save" title="Save" aria-label="Save">${iconCheck(16)}</button>
+              <button class="folder-iconbtn" type="button" data-act="cancel" title="Cancel" aria-label="Cancel">${iconX(16)}</button>
+            `;
+          }
+
+          const input = el.querySelector('[data-role="folderInput"]');
+          const saveBtn = el.querySelector('button[data-act="save"]');
+          const cancelBtn = el.querySelector('button[data-act="cancel"]');
+
+          const cancel = () => renderFolders();
+
+          if (cancelBtn) cancelBtn.addEventListener("click", (ev) => { ev.preventDefault(); ev.stopPropagation(); cancel(); });
+
+          if (saveBtn) saveBtn.addEventListener("click", async (ev) => {
+            ev.preventDefault();
+            ev.stopPropagation();
+            if (!await requireAdmin("rename a folder")) return;
+
+            const newName = (input?.value || "").trim();
+            if (!newName) {
+              toast("Invalid name", "Folder name can’t be empty.");
+              return;
+            }
+            await renameFolder(folder.id, newName);
+          });
+
+          if (input){
+            input.addEventListener("click", (ev) => ev.stopPropagation());
+            input.focus();
+            input.select();
+            input.addEventListener("keydown", (ev) => {
+              if (ev.key === "Enter") { ev.preventDefault(); saveBtn?.click(); }
+              if (ev.key === "Escape") { ev.preventDefault(); cancel(); }
+            });
+          }
+        });
+      }
+
+      if (delBtn){
+        delBtn.addEventListener("click", async (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          if (!await requireAdmin("delete a folder")) return;
+
+          const ok = confirm(`Delete folder “${folder.name}”? Subfolders will be moved up one level and files will be moved to Trash Can.`);
+          if (!ok) return;
+
+          await deleteFolder(folder.id);
+        });
+      }
+    }
+
+    el.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      el.classList.add("drop-target");
+    });
+    el.addEventListener("dragleave", () => el.classList.remove("drop-target"));
+    el.addEventListener("drop", async (e) => {
+      e.preventDefault();
+      el.classList.remove("drop-target");
+
+      const moved = e.dataTransfer.getData("application/x-filemove");
+      if (moved) {
+        try {
+          const payload = JSON.parse(moved);
+          await moveFile(payload.fromFolderId, folder.id, payload.fileId);
+          return;
+        } catch {}
+      }
+
+      if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length) {
+        await addFilesToFolder(folder.id, e.dataTransfer.files);
+      }
+    });
+
+    container.appendChild(el);
+
+    const kids = byParent.get(folder.id) || [];
+    for (const child of kids) renderNode(child, depth + 1);
+  };
+
+  // Render roots first (parentId null). Then render any orphaned nodes.
+  const roots = byParent.get(null) || [];
+  for (const r of roots) renderNode(r, 0);
+
+  // Orphans / corrupted parentIds
+  for (const f of state.folders) {
+    if (!visited.has(f.id)) renderNode(f, 0);
+  }
+}
+
+function renderFiles(){
+  const folder = getActiveFolder();
+  const list = $("#fileList");
+  const subfolderList = $("#subfolderList");
+  const empty = $("#emptyState");
+  const emptyFolderName = $("#emptyFolderName");
+
+  if (!folder) return;
+
+  const allChildren = state.folders
+    .filter(f => (f.parentId ?? null) === folder.id)
+    .filter(f => !isSystemFolder(f));
+
+  const visibleChildren = allChildren.filter(f => {
+    if (!state.search) return true;
+    return (f.name || "").toLowerCase().includes(state.search.toLowerCase());
+  });
+
+  const files = folder.files.filter(x => {
+    if (!state.search) return true;
+    return (x.name || "").toLowerCase().includes(state.search.toLowerCase());
+  });
+
+  list.innerHTML = "";
+  subfolderList.innerHTML = "";
+
+  $("#currentFolderName").textContent = folder.name;
+  $("#currentFolderMeta").textContent = `${folder.files.length} file${folder.files.length === 1 ? "" : "s"} • ${allChildren.length} subfolder${allChildren.length === 1 ? "" : "s"}`;
+  emptyFolderName.textContent = folder.name;
+
+  // Show empty state only when there are no visible subfolders AND no visible files
+  empty.style.display = (files.length === 0 && visibleChildren.length === 0) ? "block" : "none";
+
+  // Render subfolders inside the current folder
+  if (visibleChildren.length) {
+    subfolderList.style.display = "grid";
+    for (const child of visibleChildren) {
+      const childSubCount = state.folders.filter(f => (f.parentId ?? null) === child.id).length;
+
+      const row = document.createElement("div");
+      row.className = "subfolder-row";
+      row.innerHTML = `
+        <div class="subfolder-left">
+          <div class="folder-icon" aria-hidden="true"></div>
+          <div class="subfolder-meta">
+            <div class="subfolder-name" title="${escapeHtml(child.name)}">${escapeHtml(child.name)}</div>
+            <div class="subfolder-sub">
+              <span>${child.files.length} file${child.files.length === 1 ? "" : "s"}</span>
+              <span>${childSubCount} subfolder${childSubCount === 1 ? "" : "s"}</span>
+            </div>
+          </div>
+        </div>
+        <div class="subfolder-pill">Open</div>
+      `;
+
+      row.addEventListener("click", async (e) => {
+        e.preventDefault();
+        state.activeFolderId = child.id;
+        await idbSetMeta("activeFolderId", state.activeFolderId);
+        render();
+      });
+
+      // Allow dropping files onto subfolders (move or upload)
+      row.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        row.classList.add("drop-target");
+      });
+      row.addEventListener("dragleave", () => row.classList.remove("drop-target"));
+      row.addEventListener("drop", async (e) => {
+        e.preventDefault();
+        row.classList.remove("drop-target");
+
+        const moved = e.dataTransfer.getData("application/x-filemove");
+        if (moved) {
+          try {
+            const payload = JSON.parse(moved);
+            await moveFile(payload.fromFolderId, child.id, payload.fileId);
+            return;
+          } catch {}
+        }
+
+        if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length) {
+          await addFilesToFolder(child.id, e.dataTransfer.files);
+        }
+      });
+
+      subfolderList.appendChild(row);
+    }
+  } else {
+    subfolderList.style.display = "none";
+  }
+
+  // Render files
+  for (const entry of files) {
+    const row = document.createElement("div");
+    row.className = "file-row";
+    row.draggable = true;
+
+    row.innerHTML = `
+      <div class="file-ico" aria-hidden="true">
+        ${fileGlyph(entry.type)}
+      </div>
+      <div class="file-meta">
+        <div class="file-name" title="${escapeHtml(entry.name)}">${escapeHtml(entry.name)}</div>
+        <div class="file-sub">
+          <span>${escapeHtml(shortType(entry.type))}</span>
+          <span>${fmtBytes(entry.size)}</span>
+          <span title="Last modified">${fmtDate(entry.lastModified)}</span>
+        </div>
+      </div>
+      <div class="file-actions">
+        <a class="linkbtn" href="#" data-action="download" title="Download file">
+          ${iconDownload()} Download
+        </a>
+        <a class="linkbtn" href="#" data-action="remove" title="Remove from folder" style="border-color: rgba(255,92,122,0.25);">
+          ${iconTrash()} Remove
+        </a>
+      </div>
+    `;
+
+    row.querySelector('[data-action="download"]').addEventListener("click", async (e) => {
+      e.preventDefault();
+      if (!await requireAdmin("download this file")) return;
+      downloadFile(entry);
+    });
+
+    row.querySelector('[data-action="remove"]').addEventListener("click", async (e) => {
+      e.preventDefault();
+      if (!await requireAdmin("remove this file")) return;
+      await removeFile(folder.id, entry.id);
+    });
+
+    row.addEventListener("dragstart", (e) => {
+      row.classList.add("dragging");
+      const payload = { fromFolderId: folder.id, fileId: entry.id };
+      e.dataTransfer.setData("application/x-filemove", JSON.stringify(payload));
+      e.dataTransfer.effectAllowed = "move";
+    });
+    row.addEventListener("dragend", () => row.classList.remove("dragging"));
+
+    list.appendChild(row);
+  }
+}
+
+function render(){
+    renderFolders();
+    renderFiles();
+    renderScheduledDrops();
+  }
+
+  // =======================
+  // Dropzone
+  // =======================
+  const dropzone = $("#dropzone");
+  dropzone.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    dropzone.classList.add("dragover");
+  });
+  dropzone.addEventListener("dragleave", () => dropzone.classList.remove("dragover"));
+  dropzone.addEventListener("drop", async (e) => {
+    e.preventDefault();
+    dropzone.classList.remove("dragover");
+
+    const moved = e.dataTransfer.getData("application/x-filemove");
+    if (moved) {
+      try {
+        const payload = JSON.parse(moved);
+        await moveFile(payload.fromFolderId, state.activeFolderId, payload.fileId);
+        return;
+      } catch {}
+    }
+
+    if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length) {
+      await addFilesToFolder(state.activeFolderId, e.dataTransfer.files);
+    }
+  });
+
+  // =======================
+// Audit logging (admin actions)
+// =======================
+async function logAdminAction(action, payload = {}, opts = {}){
+  const force = !!(opts && opts.force);
+  const who = (opts && opts.adminId) ? String(opts.adminId) : String(adminId || "");
+  const isAuthed = isAdmin || force;
+
+  if (!isAuthed) return;
+
+  const entry = {
+    id: uid(),
+    ts: Date.now(),
+    tsISO: new Date().toISOString(),
+    adminId: who || "UNKNOWN",
+    action: String(action || "unknown"),
+    payload: payload || {}
+  };
+
+  try {
+    if (db) {
+      await idbPut(STORE_AUDIT, entry);
+    } else {
+      state.auditMem = Array.isArray(state.auditMem) ? state.auditMem : [];
+      state.auditMem.push(entry);
+    }
+  } catch (e) {
+    // As a fallback, keep it in memory
+    state.auditMem = Array.isArray(state.auditMem) ? state.auditMem : [];
+    state.auditMem.push(entry);
+    console.warn("Audit log failed, stored in memory:", e);
+  }
+}
+
+async function getAuditEntries(){
+  try {
+    if (db) {
+      const rows = await idbGetAll(STORE_AUDIT);
+      return Array.isArray(rows) ? rows.slice().sort((a,b)=> (a.ts||0)-(b.ts||0)) : [];
+    }
+  } catch {}
+  return Array.isArray(state.auditMem) ? state.auditMem.slice().sort((a,b)=> (a.ts||0)-(b.ts||0)) : [];
+}
+
+function escCsv(v){
+  const s = String(v ?? "");
+  if (/[",\n\r]/.test(s)) return '"' + s.replace(/"/g,'""') + '"';
+  return s;
+}
+
+function auditToCSV(rows){
+  const header = ["Timestamp","AdminId","Action","Folder","File","Date","DetailsJSON"];
+  const lines = [header.join(",")];
+
+  for (const r of rows){
+    const p = r.payload || {};
+    const folder = p.folderName || p.toFolderName || p.fromFolderName || "";
+    const file = p.fileName || "";
+    const date = p.dateISO || p.oldISO || "";
+    const details = JSON.stringify(p);
+    const tsLocal = r.ts ? new Date(r.ts).toLocaleString() : (r.tsISO || "");
+    lines.push([
+      escCsv(tsLocal),
+      escCsv(r.adminId || ""),
+      escCsv(r.action || ""),
+      escCsv(folder),
+      escCsv(file),
+      escCsv(date),
+      escCsv(details)
+    ].join(","));
+  }
+  return lines.join("\n");
+}
+
+function auditToSpreadsheetML(rows){
+  const escapeXml = (s) => String(s ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+  const header = ["Timestamp","AdminId","Action","Folder","File","Date","DetailsJSON"];
+
+  let xml = '';
+  xml += '<?xml version="1.0"?>\n';
+  xml += '<?mso-application progid="Excel.Sheet"?>\n';
+  xml += '<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">\n';
+  xml += '  <Worksheet ss:Name="Audit Log">\n';
+  xml += '    <Table>\n';
+  xml += '      <Row>' + header.map(h => `<Cell><Data ss:Type="String">${escapeXml(h)}</Data></Cell>`).join('') + '</Row>\n';
+
+  for (const r of rows){
+    const p = r.payload || {};
+    const folder = p.folderName || p.toFolderName || p.fromFolderName || "";
+    const file = p.fileName || "";
+    const date = p.dateISO || p.oldISO || "";
+    const details = JSON.stringify(p);
+    const tsLocal = r.ts ? new Date(r.ts).toLocaleString() : (r.tsISO || "");
+
+    const cells = [
+      tsLocal,
+      r.adminId || "",
+      r.action || "",
+      folder,
+      file,
+      date,
+      details
+    ].map(v => `<Cell><Data ss:Type="String">${escapeXml(v)}</Data></Cell>`).join('');
+
+    xml += `      <Row>${cells}</Row>\n`;
+  }
+
+  xml += '    </Table>\n';
+  xml += '  </Worksheet>\n';
+  xml += '</Workbook>\n';
+  return xml;
+}
+
+function auditToWordHTML(rows){
+  const escapeHtml = (s) => String(s ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+  const header = ["Timestamp","AdminId","Action","Folder","File","Date","DetailsJSON"];
+
+  const lines = [];
+  lines.push('<!doctype html><html><head><meta charset="utf-8"><title>Audit Log</title>');
+  lines.push('<style>body{font-family:Segoe UI,Arial,sans-serif;} table{border-collapse:collapse;width:100%;} th,td{border:1px solid #ccc;padding:6px 8px;font-size:11px;vertical-align:top;} th{background:#f3f3f3;}</style>');
+  lines.push('</head><body>');
+  lines.push(`<h2>People Analytics Drop Zone — Audit Log</h2>`);
+  lines.push(`<p>Exported: ${escapeHtml(new Date().toLocaleString())}</p>`);
+  lines.push('<table><thead><tr>' + header.map(h=>`<th>${escapeHtml(h)}</th>`).join('') + '</tr></thead><tbody>');
+
+  for (const r of rows){
+    const p = r.payload || {};
+    const folder = p.folderName || p.toFolderName || p.fromFolderName || "";
+    const file = p.fileName || "";
+    const date = p.dateISO || p.oldISO || "";
+    const details = JSON.stringify(p);
+    const tsLocal = r.ts ? new Date(r.ts).toLocaleString() : (r.tsISO || "");
+
+    const cols = [
+      tsLocal,
+      r.adminId || "",
+      r.action || "",
+      folder,
+      file,
+      date,
+      details
+    ];
+    lines.push('<tr>' + cols.map(c=>`<td>${escapeHtml(c)}</td>`).join('') + '</tr>');
+  }
+
+  lines.push('</tbody></table></body></html>');
+  return lines.join('');
+}
+
+function downloadBlob(content, filename, mime){
+  const blob = content instanceof Blob ? content : new Blob([content], { type: mime || "application/octet-stream" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1500);
+}
+
+async function exportAuditLog(format){
+  const rows = await getAuditEntries();
+  if (!rows.length){
+    toast("No logs", "No admin actions have been logged yet.");
+    return;
+  }
+
+  const ts = new Date();
+  const stamp = ts.toISOString().slice(0,19).replace(/[:T]/g,'-');
+  const fmt = String(format || "excel").trim().toLowerCase();
+
+  if (fmt === "word" || fmt === "doc" || fmt === "docx"){
+    const doc = auditToWordHTML(rows);
+    downloadBlob(doc, `pa_dropzone_audit_${stamp}.doc`, "application/msword");
+    toast("Exported", "Audit log exported as a Word document (.doc).");
+    return;
+  }
+
+  if (fmt === "csv"){
+    const csv = auditToCSV(rows);
+    downloadBlob(csv, `pa_dropzone_audit_${stamp}.csv`, "text/csv;charset=utf-8");
+    toast("Exported", "Audit log exported as CSV.");
+    return;
+  }
+
+  // Default: Excel (SpreadsheetML .xls)
+  const xls = auditToSpreadsheetML(rows);
+  downloadBlob(xls, `pa_dropzone_audit_${stamp}.xls`, "application/vnd.ms-excel");
+  toast("Exported", "Audit log exported as an Excel file (.xls).");
+}
+
+// =======================
+  // Buttons (password protected where requested)
+  // =======================
+
+  // Admin session controls
+  const btnAdminLogin = $("#btnAdminLogin");
+  const btnAdminLogout = $("#btnAdminLogout");
+
+  if (btnAdminLogin) {
+    btnAdminLogin.addEventListener("click", async () => {
+      await requireAdmin("enable admin access");
+    });
+  }
+
+  if (btnAdminLogout) {
+    btnAdminLogout.addEventListener("click", async () => {
+      await logAdminAction("admin_logout", { adminId: adminId || "" }, { force: true, adminId: adminId });
+      setAdmin(false);
+      toast("Admin disabled", "Admin privileges are locked.");
+    });
+  }
+
+  // Set initial state of admin buttons (based on sessionStorage)
+  updateAdminUI();
+
+  $("#btnAddFolder").addEventListener("click", async () => {
+    if (!await requireAdmin("create a new folder")) return;
+    const name = prompt("Folder name:", "New Folder");
+    if (name === null) return;
+    await addFolder(name, null);
+  });
+
+
+
+// Inline + Folder button in the Folders panel header (creates a subfolder under the selected folder)
+const btnAddFolderInline = $("#btnAddFolderInline");
+if (btnAddFolderInline) {
+  btnAddFolderInline.addEventListener("click", async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const active = getActiveFolder();
+    if (!active || isSystemFolder(active)) {
+      toast("Select a folder", "Choose a folder first to create a subfolder.");
+      return;
+    }
+
+    if (!await requireAdmin("create a subfolder")) return;
+    const name = prompt(`Subfolder name (inside “${active.name}”):`, "New Folder");
+    if (name === null) return;
+
+    await addFolder(name, active.id);
+  });
+}
+
+
+// Create subfolder from inside the selected folder (Files panel)
+const btnAddSubfolderInFolder = $("#btnAddSubfolderInFolder");
+if (btnAddSubfolderInFolder) {
+  btnAddSubfolderInFolder.addEventListener("click", async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const active = getActiveFolder();
+    if (!active || isSystemFolder(active)) {
+      toast("Select a folder", "Choose a folder first to create a subfolder.");
+      return;
+    }
+
+    if (!await requireAdmin("create a subfolder")) return;
+    const name = prompt(`Subfolder name (inside “${active.name}”):`, "New Folder");
+    if (name === null) return;
+
+    await addFolder(name, active.id);
+  });
+}
+
+
+  $("#btnRenameFolder").addEventListener("click", async () => {
+    const f = getActiveFolder();
+    if (!f) return;
+    const name = prompt("Rename folder:", f.name);
+    if (name === null) return;
+    await renameFolder(f.id, name);
+  });
+
+  $("#btnDeleteFolder").addEventListener("click", async () => {
+    const f = getActiveFolder();
+    if (!f) return;
+    if (!await requireAdmin("delete a folder")) return;
+    const ok = confirm(`Delete folder “${f.name}”?\nFiles will be moved into another folder.`);
+    if (!ok) return;
+    await deleteFolder(f.id);
+  });
+
+  $("#btnClearAll").addEventListener("click", async () => {
+    if (!await requireAdmin("clear all files")) return;
+    const ok = confirm("Clear ALL files from ALL folders?");
+    if (!ok) return;
+    await clearAll();
+  });
+
+  
+function next12MonthEndISOs(){
+  const today = new Date();
+  today.setHours(0,0,0,0);
+
+  // Month-end of the current month
+  const thisMonthEnd = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+  thisMonthEnd.setHours(0,0,0,0);
+
+  const startOffset = (thisMonthEnd.getTime() < today.getTime()) ? 1 : 0;
+
+  const out = [];
+  for (let i = 0; i < 12; i++){
+    const d = new Date(today.getFullYear(), today.getMonth() + 1 + startOffset + i, 0);
+    d.setHours(0,0,0,0);
+    out.push(dateToISO(d));
+  }
+  return out;
+}
+
+async function generate12MonthsScheduledDrops(folderId){
+  const f = state.folders.find(x => x.id === folderId);
+  if (!f) return;
+
+  if (isSystemFolder(f)) {
+    toast("Not allowed", "Archive and Trash Can do not use scheduled drop dates.");
+    return;
+  }
+
+  f.scheduled = Array.isArray(f.scheduled) ? f.scheduled : [];
+
+  if (f.scheduled.length){
+    const ok = confirm(`Replace existing scheduled dates for “${f.name}” with the next 12 month-end dates?`);
+    if (!ok) return;
+
+    if (db){
+      for (const r of f.scheduled) await idbDelete(STORE_SCHEDULED, r.id);
+    }
+    f.scheduled = [];
+  }
+
+  const isos = next12MonthEndISOs();
+  const now = Date.now();
+  const rows = isos.map(iso => ({ id: uid(), folderId, dateISO: iso, createdAt: now }));
+
+  if (db){
+    for (const r of rows) await idbPut(STORE_SCHEDULED, r);
+  }
+
+  f.scheduled = rows.sort((a,b)=> String(a.dateISO).localeCompare(String(b.dateISO)));
+
+  renderScheduledDrops();
+  toast("Scheduled", `Generated 12 months of dates for “${f.name}”.`);
+}
+
+// Scheduled drop date controls (per-folder)
+
+$("#btnGenerate12DropDates").addEventListener("click", async () => {
+  const f = getActiveFolder();
+  if (!f) return;
+  if (!await requireAdmin("generate scheduled drop dates")) return;
+  await generate12MonthsScheduledDrops(f.id);
+});
+
+  $("#btnAddDropDate").addEventListener("click", async () => {
+    const f = getActiveFolder();
+    if (!f) return;
+    if (!await requireAdmin("add a scheduled drop date")) return;
+
+    const raw = prompt("Add scheduled drop date (YYYY-MM-DD):", "");
+    if (raw === null) return;
+
+    const d = parseDateInput(raw);
+    if (!d) {
+      toast("Invalid date", "Use YYYY-MM-DD (e.g., 2026-01-31).");
+      return;
+    }
+
+    await addScheduledDate(f.id, dateToISO(d));
+  });
+
+  $("#btnEditDropDate").addEventListener("click", async () => {
+    const f = getActiveFolder();
+    if (!f) return;
+    if (!await requireAdmin("edit a scheduled drop date")) return;
+
+    f.scheduled = Array.isArray(f.scheduled) ? f.scheduled : [];
+    if (!f.scheduled.length) {
+      toast("Nothing to edit", "No scheduled dates in this folder yet.");
+      return;
+    }
+
+    const pick = prompt(`Pick a date to edit:\n${scheduledPickerText(f.scheduled)}\n\nEnter number:`, "1");
+    if (pick === null) return;
+
+    const idx = Number(pick) - 1;
+    if (!Number.isInteger(idx) || idx < 0 || idx >= f.scheduled.length) {
+      toast("Cancelled", "Invalid selection.");
+      return;
+    }
+
+    const cur = f.scheduled[idx].dateISO;
+    const raw = prompt(`New date for ${cur} (YYYY-MM-DD):`, cur);
+    if (raw === null) return;
+
+    const d = parseDateInput(raw);
+    if (!d) {
+      toast("Invalid date", "Use YYYY-MM-DD (e.g., 2026-01-31).");
+      return;
+    }
+
+    await updateScheduledDate(f.id, f.scheduled[idx].id, dateToISO(d));
+  });
+
+  $("#btnRemoveDropDate").addEventListener("click", async () => {
+    const f = getActiveFolder();
+    if (!f) return;
+    if (!await requireAdmin("remove a scheduled drop date")) return;
+
+    f.scheduled = Array.isArray(f.scheduled) ? f.scheduled : [];
+    if (!f.scheduled.length) {
+      toast("Nothing to remove", "No scheduled dates in this folder yet.");
+      return;
+    }
+
+    const pick = prompt(`Pick a date to remove:\n${scheduledPickerText(f.scheduled)}\n\nEnter number:`, "1");
+    if (pick === null) return;
+
+    const idx = Number(pick) - 1;
+    if (!Number.isInteger(idx) || idx < 0 || idx >= f.scheduled.length) {
+      toast("Cancelled", "Invalid selection.");
+      return;
+    }
+
+    const iso = f.scheduled[idx].dateISO;
+    const ok = confirm(`Remove scheduled date ${iso} from “${f.name}”?`);
+    if (!ok) return;
+
+    await removeScheduledDate(f.id, f.scheduled[idx].id);
+  });
+
+$("#btnRemoveSelectedDropDates").addEventListener("click", async () => {
+  const f = getActiveFolder();
+  if (!f) return;
+
+  const ids = [...(state.selectedDropDateIds || new Set())];
+  if (!ids.length){
+    toast("Nothing selected", "Select one or more dates first.");
+    return;
+  }
+
+  if (!await requireAdmin("remove scheduled drop dates")) return;
+
+  // Build a helpful confirmation list (up to 12 lines)
+  const byId = new Map((f.scheduled || []).map(r => [r.id, r.dateISO]));
+  const preview = ids
+    .map(id => byId.get(id))
+    .filter(Boolean)
+    .sort()
+    .slice(0, 12)
+    .join("\n");
+
+  const more = ids.length > 12 ? `\n… +${ids.length - 12} more` : "";
+  const ok = confirm(`Remove ${ids.length} selected date(s) from “${f.name}”?\n\n${preview}${more}`);
+  if (!ok) return;
+
+  await removeMultipleScheduledDates(f.id, ids);
+});
+
+
+
+
+// Inline edit/delete icons on each scheduled date (per-folder)
+(function wireScheduledInlineActions(){
+  const list = $("#scheduledDropsList");
+  if (!list) return;
+
+// Multi-select: checkboxes + row click toggles
+list.addEventListener("change", (e) => {
+  const cb = e.target.closest("input.date-check");
+  if (!cb) return;
+
+  const li = cb.closest("li.scheduled-item");
+  if (!li) return;
+
+  const rowId = li.dataset.rowid;
+  if (!rowId) return;
+
+  state.selectedDropDateIds = state.selectedDropDateIds || new Set();
+  if (cb.checked) state.selectedDropDateIds.add(rowId);
+  else state.selectedDropDateIds.delete(rowId);
+
+  li.classList.toggle("selected", cb.checked);
+  updateRemoveSelectedButton();
+});
+
+// Optional: click anywhere on the row (except buttons/inputs) toggles checkbox
+list.addEventListener("click", (e) => {
+  const li = e.target.closest("li.scheduled-item");
+  if (!li) return;
+
+  if (e.target.closest("button") || e.target.closest("input")) return;
+
+  const cb = li.querySelector("input.date-check");
+  if (!cb) return;
+
+  cb.checked = !cb.checked;
+  cb.dispatchEvent(new Event("change", { bubbles: true }));
+});
+
+
+  function enterEdit(li){
+    if (!li || li.classList.contains("editing")) return;
+
+    li.classList.add("editing");
+
+    const curISO = li.dataset.iso || "";
+    const dateEl = li.querySelector(".d") || li.querySelector("[data-role='dateText']");
+    if (dateEl){
+      dateEl.outerHTML = `<input class="sched-input" type="date" value="${escapeHtml(curISO)}" aria-label="Edit scheduled date" />`;
+    }
+
+    const actions = li.querySelector(".sched-actions-inline");
+    if (actions){
+      actions.innerHTML = `
+        <button class="sched-iconbtn" type="button" data-act="save" title="Save" aria-label="Save">${iconCheck(18)}</button>
+        <button class="sched-iconbtn" type="button" data-act="cancel" title="Cancel" aria-label="Cancel">${iconX(18)}</button>
+      `;
+    }
+
+    const input = li.querySelector(".sched-input");
+    if (input){
+      input.focus();
+      input.addEventListener("keydown", (ev) => {
+        if (ev.key === "Enter") {
+          ev.preventDefault();
+          const b = li.querySelector('button[data-act="save"]');
+          if (b) b.click();
+        } else if (ev.key === "Escape") {
+          ev.preventDefault();
+          renderScheduledDrops();
+        }
+      });
+    }
+  }
+
+  list.addEventListener("click", async (e) => {
+    const btn = e.target.closest("button[data-act]");
+    if (!btn) return;
+
+    const li = btn.closest("li.scheduled-item");
+    if (!li) return;
+
+    const act = btn.dataset.act;
+    const f = getActiveFolder();
+    if (!f) return;
+
+    const rowId = li.dataset.rowid;
+    if (!rowId) return;
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (act === "edit") {
+      if (!await requireAdmin("edit a scheduled drop date")) return;
+      enterEdit(li);
+      return;
+    }
+
+    if (act === "delete") {
+      if (!await requireAdmin("remove a scheduled drop date")) return;
+
+      const iso = li.dataset.iso || "";
+      const ok = confirm(`Remove scheduled date ${iso} from “${f.name}”?`);
+      if (!ok) return;
+
+      await removeScheduledDate(f.id, rowId);
+      return;
+    }
+
+    if (act === "cancel") {
+      renderScheduledDrops();
+      return;
+    }
+
+    if (act === "save") {
+      if (!await requireAdmin("edit a scheduled drop date")) return;
+
+      const input = li.querySelector(".sched-input");
+      const raw = input ? (input.value || "") : "";
+      const d = parseDateInput(raw);
+
+      if (!d) {
+        toast("Invalid date", "Use YYYY-MM-DD (e.g., 2026-01-31).");
+        return;
+      }
+
+      await updateScheduledDate(f.id, rowId, dateToISO(d));
+      return;
+    }
+  });
+})();
+  // File picker (not password protected)
+  $("#btnPickFiles").addEventListener("click", () => $("#filePicker").click());
+  $("#filePicker").addEventListener("change", async (e) => {
+    const files = e.target.files;
+    if (files && files.length) await addFilesToFolder(state.activeFolderId, files);
+    e.target.value = "";
+  });
+
+  // Search
+  $("#searchInput").addEventListener("input", (e) => {
+    state.search = e.target.value || "";
+    renderFiles();
+  });
+
+  // =======================
+  // Icons
+  // =======================
+  function shortType(t){
+    if (!t || t === "unknown") return "Unknown type";
+    if (t.length <= 30) return t;
+    return t.slice(0, 27) + "…";
+  }
+
+  function fileGlyph(mime){
+    const t = (mime || "").toLowerCase();
+    if (t.startsWith("image/")) return iconImage();
+    if (t.startsWith("video/")) return iconVideo();
+    if (t.startsWith("audio/")) return iconAudio();
+    if (t.includes("pdf")) return iconDoc();
+    if (t.includes("zip") || t.includes("rar") || t.includes("7z")) return iconArchive();
+    if (t.startsWith("text/")) return iconText();
+    return iconFile();
+  }
+
+  function svg(paths, w=20, h=20){
+    return `
+      <svg width="${w}" height="${h}" viewBox="0 0 24 24" fill="none" aria-hidden="true"
+           xmlns="http://www.w3.org/2000/svg">
+        <g stroke="rgba(255,255,255,0.86)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          ${paths}
+        </g>
+      </svg>
+    `;
+  }
+
+
+
+// Admin/scheduled action icons
+function iconPen(size=20){
+  return svg(`<path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5Z"/>`, size, size);
+}
+function iconTrash(size=20){
+  return svg(`<polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>`, size, size);
+}
+function iconCheck(size=20){
+  return svg(`<polyline points="20 6 9 17 4 12"/>`, size, size);
+}
+function iconX(size=20){
+  return svg(`<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>`, size, size);
+}
+
+
+function iconFolderPlus(size=20){
+  return svg(`<path d="M3 7a2 2 0 0 1 2-2h5l2 2h9a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/><path d="M12 12v6"/><path d="M9 15h6"/>`, size, size);
+}
+
+  function iconFile(){ return svg(`<path d="M8 3h6l4 4v14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z"/><path d="M14 3v5h5"/>`); }
+  function iconText(){ return svg(`<path d="M7 3h10a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z"/><path d="M8 8h8M8 12h8M8 16h6"/>`); }
+  function iconDoc(){ return svg(`<path d="M8 3h6l4 4v14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z"/><path d="M14 3v5h5"/><path d="M9 15h6"/><path d="M9 18h6"/>`); }
+  function iconArchive(){ return svg(`<path d="M4 7h16v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7Z"/><path d="M4 3h16v4H4V3Z"/><path d="M11 11v8"/><path d="M9 11h4"/>`); }
+  function iconImage(){ return svg(`<path d="M4 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6Z"/><path d="M8 14l2-2 3 3 3-4 4 5"/><path d="M9 9h.01"/>`); }
+  function iconVideo(){ return svg(`<path d="M4 7a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7Z"/><path d="M17 10l3-2v8l-3-2v-4Z"/>`); }
+  function iconAudio(){ return svg(`<path d="M9 18a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H9Z"/><path d="M11 10v6"/><path d="M13 10v6"/>`); }
+  function iconDownload(){ return svg(`<path d="M12 3v10"/><path d="M8 9l4 4 4-4"/><path d="M5 21h14"/>`, 18, 18); }
+  function iconTrash(){ return svg(`<path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M6 6l1 16h10l1-16"/><path d="M10 11v6"/><path d="M14 11v6"/>`, 18, 18); }
+
+  // =======================
+  // Boot / Load from DB
+  // =======================
+  async function bootstrap(){
+    try {
+      db = await idbOpen();
+    } catch (err) {
+      $("#currentFolderName").textContent = "Storage not available";
+      $("#currentFolderMeta").textContent = "IndexedDB not supported or blocked";
+      toast("Warning", "IndexedDB not available. Persistence disabled.");
+
+      const a = uid(), b = uid(), c = uid(), d = uid(), e = uid();
+      state.folders = [
+        { id: a, name: "Inbox", position: 0, createdAt: Date.now(), files: [], scheduled: fiscalMonthEndDates(SCHEDULE_DEFAULT_YEAR).map(d => ({ id: uid(), folderId: a, dateISO: dateToISO(d), createdAt: Date.now() })) },
+        { id: b, name: "To Review", position: 1, createdAt: Date.now(), files: [], scheduled: fiscalMonthEndDates(SCHEDULE_DEFAULT_YEAR).map(d => ({ id: uid(), folderId: b, dateISO: dateToISO(d), createdAt: Date.now() })) },
+        { id: c, name: "Done", position: 2, createdAt: Date.now(), files: [], scheduled: fiscalMonthEndDates(SCHEDULE_DEFAULT_YEAR).map(d => ({ id: uid(), folderId: c, dateISO: dateToISO(d), createdAt: Date.now() })) },
+        { id: d, name: "Archive", position: 3, createdAt: Date.now(), parentId: null,  systemKey: "archive", isSystem: true, files: [], scheduled: [] },
+        { id: e, name: "Trash Can", position: 4, createdAt: Date.now(), parentId: null,  systemKey: "trash", isSystem: true, files: [], scheduled: [] },
+      ];
+      state.activeFolderId = a;
+      render();
+      return;
+    }
+
+    let folders = await idbGetAll(STORE_FOLDERS);
+    folders = (folders || []).sort((x,y) => (x.position ?? 0) - (y.position ?? 0));
+
+    if (!folders.length) {
+      const now = Date.now();
+      
+
+const seed = [
+  { id: uid(), name: "Inbox", position: 0, createdAt: now, parentId: null },
+  { id: uid(), name: "To Review", position: 1, createdAt: now, parentId: null },
+  { id: uid(), name: "Done", position: 2, createdAt: now, parentId: null },
+  { id: uid(), name: "Archive", position: 3, createdAt: now, parentId: null, systemKey: "archive", isSystem: true },
+  { id: uid(), name: "Trash Can", position: 4, createdAt: now, parentId: null, systemKey: "trash", isSystem: true }
+];
+      for (const f of seed) await idbPut(STORE_FOLDERS, f);
+      folders = seed;
+    }
+
+    const files = await idbGetAll(STORE_FILES);
+    const filesByFolder = new Map();
+    for (const f of files || []) {
+      if (!filesByFolder.has(f.folderId)) filesByFolder.set(f.folderId, []);
+      filesByFolder.get(f.folderId).push(f);
+    }
+    for (const arr of filesByFolder.values()) {
+      arr.sort((a,b) => (b.addedAt ?? 0) - (a.addedAt ?? 0));
+    }
+
+    state.folders = folders.map(f => ({
+      ...f,
+      parentId: (f.parentId ?? null),
+      files: filesByFolder.get(f.id) || [],
+      scheduled: []
+    }));
+
+    await ensureSystemFolders();
+
+    state.activeFolderId = await idbGetMeta("activeFolderId");
+    ensureActiveFolder();
+    await idbSetMeta("activeFolderId", state.activeFolderId);
+
+    // Load / seed scheduled drops per folder
+    for (const f of state.folders) {
+      await refreshScheduled(f.id);
+    }
+
+    render();
+    toast("Loaded", "Your folders and files are restored.");
+  }
+
+  bootstrap();
+})();
+
+</script>
+</body>
+</html>
